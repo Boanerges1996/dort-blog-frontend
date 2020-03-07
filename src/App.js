@@ -8,9 +8,23 @@ import User from './components/userPage/user';
 import Verify from './components/landing/verifyEmail';
 import ActualBlog from './components/landing/viewBlog';
 import UserProfile from './components/userPage/userProfile'
+import socketIOClient from 'socket.io-client'
 
-
+let socket 
 class App extends React.Component{
+  constructor(props){
+    super(props)
+    this.state = {
+      endpoint:"https://glacial-inlet-12222.herokuapp.com"
+    }
+    
+  }
+  componentDidMount(){
+    socket = socketIOClient(this.state.endpoint)
+    socket.on("connected",data=>{
+      console.log(data)
+    })
+  }
   render(){
     return (
       <div className="App">
@@ -29,3 +43,7 @@ class App extends React.Component{
 }
 
 export default App;
+export {
+  socket
+}
+

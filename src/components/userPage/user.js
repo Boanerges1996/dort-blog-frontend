@@ -26,10 +26,12 @@ class User extends React.Component{
     fetchBlog = async(e)=>{
         await Axios.get(`${url.url}/user/blog/one/${e.target.id}`).then(async data=>{
             await this.props.single(data.data)
-            this.setState({in:true},()=>{
-                window.location.reload()
+            await Axios.get(`${url.url}/user/comment/get/blog/${this.props.blog_id}`).then(data=>{
+                this.props.comment(data.data)
             })
+            this.setState({in:true})
         })
+        
     }
 
     componentDidMount (){
@@ -72,16 +74,23 @@ const getParticularBlog = data=>({
     data:data
 })
 
+const getComments = data =>({
+    type:"COMMENTS",
+    data:data
+})
+
 const mapStateToProps = state =>{
     return {
         url: state.user.avatar,
-        Blogs: state.blogs
+        Blogs: state.blogs,
+        blog_id: state.selectedBlog._id
     }
 }
 const mapDispatchToProps = dispatch =>{
     return {
         getBlogs: (data)=>dispatch(fetchBlogs(data)),
-        single: (data)=>dispatch(getParticularBlog(data))
+        single: (data)=>dispatch(getParticularBlog(data)),
+        comment: (data)=>dispatch(getComments(data))
     }
 }
 

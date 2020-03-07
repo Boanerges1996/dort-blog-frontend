@@ -13,6 +13,9 @@ class LandBody extends React.Component{
     viewBlog = async(e)=>{
         Axios.get(`${url.url}/user/blog/one/${e.target.id}`).then(async data=>{
             await this.props.single(data.data)
+            await Axios.get(`${url.url}/user/comment/get/blog/${this.props.blog_id}`).then(data=>{
+                this.props.comment(data.data)
+            })
             this.setState({
                 in:true
             })
@@ -51,16 +54,23 @@ const getParticularBlog = data=>({
     data:data
 })
 
+
 const mapStateToProps = state =>{
     return {
         Data: state.blogs
     }
 }
 
+const getComments = data =>({
+    type:"COMMENTS",
+    data:data
+})
+
 const mapDispatchToProps = dispatch =>{
     return {
         getBlogs: (data)=>dispatch(fetchBlogs(data)),
-        single: (data)=>dispatch(getParticularBlog(data))
+        single: (data)=>dispatch(getParticularBlog(data)),
+        comment: (data)=>dispatch(getComments(data))
     }
 }
 

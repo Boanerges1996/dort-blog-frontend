@@ -17,7 +17,9 @@ const initStore = {
     blogs:[],
     comments:[],
     signupExist:false,
-    selectedBlog:{}
+    selectedBlog:{
+        _id:""
+    }
 }
 
 const rootReducer = (state=initStore,action)=>{

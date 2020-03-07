@@ -5,13 +5,26 @@ import { Avatar } from '@material-ui/core'
 import Comment from './comment'
 import {connect} from 'react-redux'
 import UserHeader from '../userPage/header2'
+import SideBar from '../userPage/sideBar'
+
 
 
 class ActualBlog extends React.Component{
+    state={
+        left:false,
+        writeModal:false
+    }
     render(){
         return (
             <div>
-                {this.props.logged?<UserHeader imgUrl={this.props.user.avatar}/>:<LandHeader />}
+                {this.props.logged?
+                    <div>
+                        <UserHeader onClickMenu={()=>this.setState({left:true})} imgUrl={this.props.user.avatar}/>
+                        <SideBar left={this.state.left} closeLeft={()=>this.setState({left:false})} clickOne={()=>this.setState({left:false})}
+                            write={()=>this.setState({writeModal:true})}
+                        />
+                    </div>
+                    :<LandHeader />}
                 <div className="container">
                 
                 <div className="container-fluid " style={{paddingTop:"60px",float:"left"}}>

@@ -5,6 +5,7 @@ import Axios from 'axios'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router'
 import CommentBox from './commentBox.js'
+import {socket} from '../../App'
 
 class Comments extends React.Component{
     state = {
@@ -18,6 +19,7 @@ class Comments extends React.Component{
             comment:e.target.value
         })
     }
+    
 
     postComment = ()=>{
         if(this.props.logged){
@@ -38,6 +40,7 @@ class Comments extends React.Component{
             console.log(data.data)
             this.props.comments(data.data)
         })
+        
     }
     render(){
         if(this.state.write){

@@ -13,7 +13,8 @@ class Signup extends React.Component{
         lastname:"",
         email:"",
         password:"",
-        exist:true
+        exist:true,
+        register:false
     }
 
     changeInput = e=>{
@@ -24,12 +25,12 @@ class Signup extends React.Component{
         e.preventDefault()
         Axios.post(`${url.url}\\user\\signup`,this.state)
         .then(data=>{
-            this.setState({exist:data.data.exist})
+            this.setState({exist:data.data.exist,register:data.data.registered})
         })
     }
 
     render(){
-        if(this.props.verified){
+        if(this.state.register){
             return <Redirect to="/verify/email"/>
         }
         return (
