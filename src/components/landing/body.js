@@ -5,7 +5,9 @@ import Axios from 'axios'
 import url from '../../url.json'
 import {Redirect} from 'react-router-dom'
 import {connect} from 'react-redux'
+import socketIOClient from 'socket.io-client'
 
+let socket;
 class LandBody extends React.Component{
     state = {
         in:false
@@ -16,6 +18,7 @@ class LandBody extends React.Component{
             await Axios.get(`${url.url}/user/comment/get/blog/${this.props.blog_id}`).then(data=>{
                 this.props.comment(data.data)
             })
+            await socket.emit("join-comment",{id:this.props.blog_id})
             this.setState({
                 in:true
             })
@@ -26,6 +29,13 @@ class LandBody extends React.Component{
         Axios.get(`${url.url}/user/blog/all`).then(data=>{
             this.props.getBlogs(data.data)
         })
+        socket = socketIOClient.connect(url.url)
+        socket.on("connected",data=>{
+            console.log(data)
+        })
+        // socket.on("Self",data=>{
+        //     console.log(data)
+        // })
     }
     render(){
         if(this.state.in){
@@ -57,7 +67,8 @@ const getParticularBlog = data=>({
 
 const mapStateToProps = state =>{
     return {
-        Data: state.blogs
+        Data: state.blogs,
+        blog_id: state.selectedBlog._id
     }
 }
 

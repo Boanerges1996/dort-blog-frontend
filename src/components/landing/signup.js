@@ -1,5 +1,5 @@
 import React from 'react'
-import { Form } from 'react-bootstrap'
+import { Form,Button as Btn } from 'react-bootstrap'
 import {Input,Button,Icon} from 'semantic-ui-react'
 import {Link} from 'react-router-dom'
 import Axios from 'axios'
@@ -14,7 +14,8 @@ class Signup extends React.Component{
         email:"",
         password:"",
         exist:true,
-        register:false
+        register:false,
+        loading:false
     }
 
     changeInput = e=>{
@@ -23,6 +24,9 @@ class Signup extends React.Component{
 
     registerUser = (e)=>{
         e.preventDefault()
+        this.setState({
+            loading:true
+        })
         Axios.post(`${url.url}\\user\\signup`,this.state)
         .then(data=>{
             this.setState({exist:data.data.exist,register:data.data.registered})
@@ -48,8 +52,10 @@ class Signup extends React.Component{
                         <Input placeholder="email..." className="mb-2 w-75" type="email" name="email" onChange={this.changeInput} value={this.state.email}/>
                         <Input placeholder="password..." className="mb-2 w-75" type="password" name="password" onChange={this.changeInput} value={this.state.password}/>
                         <br />
-                        <Button animated size="large" primary className="w-75" onClick={this.registerUser}>
+                        <Button animated size="large" primary className="w-75" onClick={this.registerUser} loading={this.state.loading}>
                             <Button.Content visible>Signup</Button.Content>
+                            {/* <Button cla>SignUp</Button> */}
+                            {/* <Btn>SignUp</Btn> */}
                             <Button.Content hidden>
                                 <Icon name='arrow right' />
                             </Button.Content>

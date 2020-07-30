@@ -10,7 +10,7 @@ import ActualBlog from './components/landing/viewBlog';
 import UserProfile from './components/userPage/userProfile'
 import socketIOClient from 'socket.io-client'
 
-let socket 
+let socket = socketIOClient("http://localhost:5000")
 class App extends React.Component{
   constructor(props){
     super(props)
@@ -20,7 +20,6 @@ class App extends React.Component{
     
   }
   componentDidMount(){
-    socket = socketIOClient(this.state.endpoint)
     socket.on("connected",data=>{
       console.log(data)
     })

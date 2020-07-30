@@ -6,13 +6,25 @@ import Comment from './comment'
 import {connect} from 'react-redux'
 import UserHeader from '../userPage/header2'
 import SideBar from '../userPage/sideBar'
+import socketIOClient from 'socket.io-client'
+import url from '../../url.json'
 
 
-
+let socket
 class ActualBlog extends React.Component{
     state={
         left:false,
         writeModal:false
+    }
+    componentDidMount(){
+        socket = socketIOClient.connect(url.url)
+        socket.on("connect",data=>{
+            console.log(data)
+        })
+        socket.emit("join-comment",{id:this.props.data._id})
+        socket.on("blog-comment",data=>{
+            console.log(data)
+        })
     }
     render(){
         return (

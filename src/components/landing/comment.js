@@ -5,8 +5,9 @@ import Axios from 'axios'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router'
 import CommentBox from './commentBox.js'
-import {socket} from '../../App'
+import socketIOClient from 'socket.io-client'
 
+let socket
 class Comments extends React.Component{
     state = {
         comment:"",
@@ -21,12 +22,25 @@ class Comments extends React.Component{
     }
     
 
-    postComment = ()=>{
+    postComment = async()=>{
         if(this.props.logged){
-            Axios.post(`${url.url}/user/comment/write/${this.props.id}`,{...this.state,blog_id:this.props.blog_id},{
+            this.setState({
+                loading:true
+            })
+            socket.emit("write-comment",{username:this.props.user.firstname,avatar:this.props.user.avatar,blog_id:this.props.blog_id})
+            await Axios.post(`${url.url}/user/comment/write/${this.props.id}`,{...this.state,blog_id:this.props.blog_id},{
                 headers:{
                     "auth-token":this.props.token
                 }
+            })
+            this.setState({
+                comment:""
+            })
+            await Axios.get(`${url.url}/user/comment/get/blog/${this.props.blog_id}`).then(data=>{
+                this.props.comments(data.data)
+            })
+            this.setState({
+                loading:false
             })
         }
         else{
@@ -36,11 +50,18 @@ class Comments extends React.Component{
         }
     }
     componentDidMount(){
+        socket = socketIOClient(url.url)
+        socket.on("connect",data=>{
+            console.log(data)
+        })
         Axios.get(`${url.url}/user/comment/get/blog/${this.props.blog_id}`).then(data=>{
             console.log(data.data)
             this.props.comments(data.data)
         })
-        
+        socket.on("join-comment",{blog_id:this.props.blog_id})
+        socket.on("user-comment",data=>{
+            console.log(data)
+        })
     }
     render(){
         if(this.state.write){
@@ -88,7 +109,8 @@ const mapStateToProps = state =>{
         token:state.user.auth_token,
         logged:state.user.logged,
         blog_id:state.selectedBlog._id,
-        myComments:state.comments
+        myComments:state.comments,
+        user: state.user
     }
 }
 
